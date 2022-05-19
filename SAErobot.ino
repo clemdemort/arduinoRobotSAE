@@ -48,20 +48,6 @@ void loop() {
       Serial.println(compteurG);
   Serial.println(compteurD);
 }
-/*
-void codeur(){
-   if(flagAG==true){
-      flagAG = false;
-      compteurG++;
-  }
-  if(flagAD==true){
-      flagAD = false;
-      compteurD++;  
-  }
-  
-
-}
-*/
 
 void interruptG(){
   if (digitalRead(2)==digitalRead(4)){
@@ -93,6 +79,33 @@ float getDist()
   float dist = pulseIn(SOUND,HIGH)/58.0;
 
   return dist;
+}
+void Script(float distance,int Rspeed,int Lspeed)
+{
+    float ratio = 0;
+    float Rdist = distance;
+    float Ldist = distance;
+    float startR = compteurD;
+    float startL = compteurG;
+    if(abs(Rspeed) >= abs(Lspeed))
+    {
+      ratio = float(Lspeed/Rspeed);
+      Ldist *= ratio;
+    }else{
+      ratio = float(Rspeed/Lspeed);
+      Rdist *= ratio;
+    }
+    bool cond = true;
+    while(cond)
+    {
+      if(Rdist <= compteurD - startR && Ldist <= compteurG - startL)
+      {
+        cond = false;  
+      }
+      Rwheel(Rspeed);
+      Lwheel(Lspeed);
+    }
+    
 }
 
 void RWheel(int vitesse)
