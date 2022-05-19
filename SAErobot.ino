@@ -1,7 +1,4 @@
-#include <SoftwareSerial.h>
 #define SOUND 5
-
-//bjr clement
 
 float  nbTourG = 0;
 float  nbTourD = 0;
@@ -14,9 +11,9 @@ String commande= "";
 void setup() {
   // put your setup code here, to run once:
   Serial1.begin(9600);
-  while(!Serial1){;}
+ // while(!Serial1){;}
   Serial.begin(9600);
-  while(!Serial){;}
+ // while(!Serial){;}
   pinMode(12,OUTPUT);
   pinMode(10,OUTPUT);
   pinMode(8,OUTPUT);
@@ -34,21 +31,80 @@ void loop() {
   if(Serial1.available()){
       message = (char)Serial1.read();
       commande+=message;
-      Serial.println(commande);
+      Serial.println(message);
       commande="";
   }
   dist = getDist();
   if(dist > 20){
-    RWheel(255);
-    LWheel(255);
+    action();
+    message=" ";
   }else{
-    RWheel(0);
-    LWheel(0);    
+    LWheel(0);
+    RWheel(0);  
     }
-      Serial.println(compteurG);
-  Serial.println(compteurD);
 }
 
+void Script(float distance,int Rspeed,int Lspeed)
+{
+    float ratio = 0;
+    float Rdist = distance;
+    float Ldist = distance;
+    float startR = compteurD;
+    float startL = compteurG;
+    if(abs(Rspeed) >= abs(Lspeed))
+    {
+      ratio = float(Lspeed/Rspeed);
+      Ldist *= ratio;
+    }else{
+      ratio = float(Rspeed/Lspeed);
+      Rdist *= ratio;
+    }
+    bool cond = true;
+    while(cond)
+    {
+      if(Rdist <= compteurD - startR && Ldist <= compteurG - startL)
+      {
+        cond = false;  
+      }
+      Rwheel(Rspeed);
+      Lwheel(Lspeed);
+    }
+    
+}
+
+void action(){
+  compteurG = 0;
+  compteurD = 0;
+  //Serial.println(commande);
+    if(message == 'A'){
+      while(compteurG!=200 && compteurD !=200){
+        Serial.println(compteurG);
+        LWheel(255);
+        RWheel(255);   
+      }
+    }else if(message == 'R'){
+      while(compteurG!=-200 && compteurD !=-200){
+        Serial.println(compteurG);
+        LWheel(-255);
+        RWheel(-255);   
+      }
+    }else if(message == 'G'){
+      while(compteurG!=200 && compteurD !=-200){
+        Serial.println(compteurG);
+        LWheel(255);
+        RWheel(-255);   
+      }
+    }else if(message == 'D'){
+      while(compteurG!=-200 && compteurD !=200){
+        Serial.println(compteurG);
+        LWheel(-255);
+        RWheel(255);   
+      }
+  }else{
+        LWheel(0);
+        RWheel(0);
+    }
+}
 void interruptG(){
   if (digitalRead(2)==digitalRead(4)){
       compteurG++;
@@ -79,33 +135,6 @@ float getDist()
   float dist = pulseIn(SOUND,HIGH)/58.0;
 
   return dist;
-}
-void Script(float distance,int Rspeed,int Lspeed)
-{
-    float ratio = 0;
-    float Rdist = distance;
-    float Ldist = distance;
-    float startR = compteurD;
-    float startL = compteurG;
-    if(abs(Rspeed) >= abs(Lspeed))
-    {
-      ratio = float(Lspeed/Rspeed);
-      Ldist *= ratio;
-    }else{
-      ratio = float(Rspeed/Lspeed);
-      Rdist *= ratio;
-    }
-    bool cond = true;
-    while(cond)
-    {
-      if(Rdist <= compteurD - startR && Ldist <= compteurG - startL)
-      {
-        cond = false;  
-      }
-      Rwheel(Rspeed);
-      Lwheel(Lspeed);
-    }
-    
 }
 
 void RWheel(int vitesse)
