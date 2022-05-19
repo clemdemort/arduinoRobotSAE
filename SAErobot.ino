@@ -37,11 +37,12 @@ void loop() {
   dist = getDist();
   if(dist > 20){
     action();
-    message=" ";
+
   }else{
     LWheel(0);
     RWheel(0);  
     }
+  message=" ";
 }
 
 void Script(float distance,int Rspeed,int Lspeed)
@@ -62,12 +63,13 @@ void Script(float distance,int Rspeed,int Lspeed)
     bool cond = true;
     while(cond)
     {
+      Serial.println(compteurG);
       if(Rdist <= compteurD - startR && Ldist <= compteurG - startL)
       {
         cond = false;  
       }
-      Rwheel(Rspeed);
-      Lwheel(Lspeed);
+      RWheel(Rspeed);
+      LWheel(Lspeed);
     }
     
 }
@@ -77,29 +79,13 @@ void action(){
   compteurD = 0;
   //Serial.println(commande);
     if(message == 'A'){
-      while(compteurG!=200 && compteurD !=200){
-        Serial.println(compteurG);
-        LWheel(255);
-        RWheel(255);   
-      }
+      Script(200,255,255);
     }else if(message == 'R'){
-      while(compteurG!=-200 && compteurD !=-200){
-        Serial.println(compteurG);
-        LWheel(-255);
-        RWheel(-255);   
-      }
+      Script(200,-255,-255);
     }else if(message == 'G'){
-      while(compteurG!=200 && compteurD !=-200){
-        Serial.println(compteurG);
-        LWheel(255);
-        RWheel(-255);   
-      }
+      Script(200,-255,255);
     }else if(message == 'D'){
-      while(compteurG!=-200 && compteurD !=200){
-        Serial.println(compteurG);
-        LWheel(-255);
-        RWheel(255);   
-      }
+      Script(200,255,-255);
   }else{
         LWheel(0);
         RWheel(0);
