@@ -4,9 +4,11 @@ float  nbTourG = 0;
 float  nbTourD = 0;
 float  compteurG = 0;
 float  compteurD = 0;
-float  dist;
 char   message;
 String commande= "";
+
+
+
 
 void setup() {
   // put your setup code here, to run once:
@@ -34,58 +36,66 @@ void loop() {
       Serial.println(message);
       commande="";
   }
-  dist = getDist();
-  if(dist > 20){
     action();
-
-  }else{
-    LWheel(0);
-    RWheel(0);  
-    }
-  message=" ";
+    message=' ';
 }
 
-void Script(float distance,int Rspeed,int Lspeed)
+void Script(bool(*inter)(void),int distanceR,int distanceL,int Rspeed,int Lspeed)
 {
-    float ratio = 0;
-    float Rdist = distance;
-    float Ldist = distance;
-    float startR = compteurD;
-    float startL = compteurG;
-    if(abs(Rspeed) >= abs(Lspeed))
-    {
-      ratio = float(Lspeed/Rspeed);
-      Ldist *= ratio;
-    }else{
-      ratio = float(Rspeed/Lspeed);
-      Rdist *= ratio;
-    }
+    float Rdist = distanceR;
+    float Ldist = distanceL;
+    compteurD = 0;
+    compteurG = 0;
     bool cond = true;
     while(cond)
     {
-      Serial.println(compteurG);
-      if(Rdist <= compteurD - startR && Ldist <= compteurG - startL)
+      float dist = getDist();
+      Serial.println(dist);
+      if(dist < 20)
+      {
+        cond = inter();
+      }
+      if(cond){
+        RWheel(Rspeed);
+        LWheel(Lspeed);
+      }
+      if(Rdist < abs(compteurD) && Ldist < abs(compteurG))
       {
         cond = false;  
       }
-      RWheel(Rspeed);
-      LWheel(Lspeed);
     }
     
 }
-
+bool StopSTP()
+{
+  RWheel(0);
+    LWheel(0); 
+  float distance = getDist();
+  while(distance < 20)
+  {
+    distance = getDist();
+    Serial.println(distance);
+    RWheel(-255);
+    LWheel(-255);  
+  }
+  return false;  
+}
+bool StoppasSTP()
+{
+  return true;  
+}
 void action(){
   compteurG = 0;
   compteurD = 0;
   //Serial.println(commande);
     if(message == 'A'){
-      Script(200,255,255);
+      Script(StopSTP,200,200,255,255);
     }else if(message == 'R'){
-      Script(200,-255,-255);
+      Script(StoppasSTP,200,200,-255,-255);
     }else if(message == 'G'){
-      Script(200,-255,255);
+      Script(StoppasSTP,200,200,-255,255);
     }else if(message == 'D'){
-      Script(200,255,-255);
+      Script(StoppasSTP,200,200,255,-255);
   }else{
         LWheel(0);
         RWheel(0);
@@ -119,7 +129,6 @@ float getDist()
   digitalWrite(SOUND,LOW);
   pinMode(SOUND,INPUT);
   float dist = pulseIn(SOUND,HIGH)/58.0;
-
   return dist;
 }
 
