@@ -1,6 +1,8 @@
 #include <SoftwareSerial.h>
 #define SOUND 5
 
+//bjr clement
+
 float  nbTourG = 0;
 float  nbTourD = 0;
 float  compteurG = 0;
