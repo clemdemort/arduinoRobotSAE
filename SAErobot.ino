@@ -1,4 +1,3 @@
-
 #define SOUND 5
 
 float  nbTourG = 0;
@@ -43,6 +42,34 @@ void loop() {
     LWheel(0);
     RWheel(0);  
     }
+}
+
+void Script(float distance,int Rspeed,int Lspeed)
+{
+    float ratio = 0;
+    float Rdist = distance;
+    float Ldist = distance;
+    float startR = compteurD;
+    float startL = compteurG;
+    if(abs(Rspeed) >= abs(Lspeed))
+    {
+      ratio = float(Lspeed/Rspeed);
+      Ldist *= ratio;
+    }else{
+      ratio = float(Rspeed/Lspeed);
+      Rdist *= ratio;
+    }
+    bool cond = true;
+    while(cond)
+    {
+      if(Rdist <= compteurD - startR && Ldist <= compteurG - startL)
+      {
+        cond = false;  
+      }
+      Rwheel(Rspeed);
+      Lwheel(Lspeed);
+    }
+    
 }
 
 void action(){
