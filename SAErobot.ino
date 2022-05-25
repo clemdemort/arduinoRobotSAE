@@ -51,7 +51,8 @@ void Script(bool(*inter)(void),int distanceR,int distanceL,int Rspeed,int Lspeed
     {
       float dist = getDist();
       Serial.println(dist);
-      if(dist < 40)
+      sendBT(dist);
+      if(dist < 30)
       {
 		    float tempG = compteurG;
 	    	float tempD = compteurD;
@@ -80,7 +81,7 @@ bool StopSTP()
   Serial.print("mec ya un mur je teste numero: ");
   Serial.println(i);
     float distance = getDist();
-    while(distance < 50)
+    while(distance < 35)
     {
       distance = getDist();
       Serial.println(distance);
@@ -130,7 +131,12 @@ void interruptD(){
   }
 }
 
-
+void sendBT(float number){
+      char text[5];
+      dtostrf(number,0,4,text);
+      Serial1.write(text);
+      Serial1.write("\n");
+}
 
 float getDist()
 {
