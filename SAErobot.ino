@@ -128,13 +128,37 @@ void action() {
   } else if (message == 'e') {
     Script(StoppasSTP, 50, 50, vitesseRoue, -vitesseRoue);
   } else if (message == 'o') {
-    Script(StoppasSTP, 50, 50, -vitesseRoue, vitesseRoue);  
+    Script(StoppasSTP, 50, 50, -vitesseRoue, vitesseRoue);
+  } else if (message == 'S') {  
+    LWheel(0);
+    RWheel(0);
+    sequence();
   } else if (message == 'P') {
     LWheel(0);
     RWheel(0);
   } else {
     LWheel(0);
     RWheel(0);
+  }
+}
+
+void sequence(){
+  char sequence[100];
+  message=' ';
+  int i=0;
+  while(message != 'Q'){
+    message=' ';
+    while(message == ' '){
+      TestInput();
+    }   
+    sequence[i]= message;
+    Serial.print(message);
+    i++;
+  }
+  for(int j = 0; j<i;j++){
+    message = sequence[j];
+    Serial.print(message);
+    action();
   }
 }
 
