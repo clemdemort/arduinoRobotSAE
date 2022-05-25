@@ -5,9 +5,8 @@ float  nbTourD = 0;
 float  compteurG = 0;
 float  compteurD = 0;
 char   message;
-String commande = "";
 int    vitesseRoue = 255;
-bool   cond = true;
+
 
 
 void setup() {
@@ -26,11 +25,15 @@ void setup() {
   pinMode(3, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(2), interruptG, RISING);
   attachInterrupt(digitalPinToInterrupt(3), interruptD, FALLING);
-  attachInterrupt(digitalPinToInterrupt(0), interruptBT, RISING);
 }
 
 void loop() {
   // put your main code here, to run repeatedly
+    if (Serial1.available()) {
+    message = (char)Serial1.read();
+    Serial.println(message);
+  }
+  action();
   message = ' ';
 }
 
@@ -40,7 +43,7 @@ void Script(bool(*inter)(void), int distanceR, int distanceL, int Rspeed, int Ls
   float Ldist = distanceL;
   compteurD = 0;
   compteurG = 0;
-  cond = true;
+  bool   cond = true;
   while (cond)
   {
     float dist = getDist();
@@ -113,27 +116,10 @@ void action() {
     Script(StoppasSTP, 50, 50, vitesseRoue, -vitesseRoue);
   } else if (message == 'o') {
     Script(StoppasSTP, 50, 50, -vitesseRoue, vitesseRoue);
-  } else if (message == 'V') {
-    int i = 0;
-    char VitesseM[3];
-    while (message == 'T') {
-      VitesseM[i] = (char)Serial1.read();
-      i++;
-    }
-    vitesseRoue = atoi(VitesseM);
-    Serial.print(VitesseM);
   } else {
     LWheel(0);
     RWheel(0);
   }
-}
-
-void interruptBT() {
-  if (Serial1.available()) {
-    message = (char)Serial1.read();
-    Serial.println(message);
-  }
-  cond = false;
 }
 
 void interruptG() {
