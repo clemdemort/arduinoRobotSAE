@@ -6,8 +6,8 @@ float  compteurG = 0;
 float  compteurD = 0;
 char   message;
 int    vitesseRoue = 255;
-
-
+bool   IU = true;
+bool   secu = true;
 
 void setup() {
   // put your setup code here, to run once:
@@ -15,6 +15,9 @@ void setup() {
   // while(!Serial1){;}
   Serial.begin(9600);
   // while(!Serial){;}
+  Serial1.print("AT");
+  Serial1.print("AT+NAMERobot_33");
+  Serial1.print("AT+PIN0000");
   pinMode(12, OUTPUT);
   pinMode(10, OUTPUT);
   pinMode(8, OUTPUT);
@@ -52,7 +55,7 @@ void Script(bool(*inter)(void), int distanceR, int distanceL, int Rspeed, int Ls
   {
     float dist = getDist();
     //Serial.println(dist);
-    sendBT(dist);
+    if(IU)sendBT(dist);
     TestInput();
     Serial.println("message un");
     Serial.println(message);
@@ -112,9 +115,14 @@ bool StoppasSTP()
 void action() {
   compteurG = 0;
   compteurD = 0;
-  //Serial.println(commande);
+  Serial.println(message);
   if (message == 'A') {
-    Script(StopSTP, 200, 200, vitesseRoue, vitesseRoue);
+    if(secu == true){
+      Script(StopSTP, 200, 200, vitesseRoue, vitesseRoue);
+    }else{
+      Script(StoppasSTP, 200, 200, vitesseRoue, vitesseRoue);
+    }
+    
   } else if (message == 'R') {
     Script(StoppasSTP, 200, 200, -vitesseRoue, -vitesseRoue);
   } else if (message == 'G') {
@@ -136,6 +144,15 @@ void action() {
   } else if (message == 'P') {
     LWheel(0);
     RWheel(0);
+    delay(500);
+  } else if (message == 'C') {
+    secu=true;
+  } else if (message == 'c') {
+    secu=false;
+  } else if (message == 'U') {
+    IU = true;
+  } else if (message == 'u') {
+    IU = false;
   } else {
     LWheel(0);
     RWheel(0);
@@ -156,9 +173,15 @@ void sequence(){
     i++;
   }
   for(int j = 0; j<i;j++){
-    message = sequence[j];
-    Serial.print(message);
-    action();
+    TestInput();
+    if(message !='P'){
+      message = sequence[j];
+      Serial.print(message);
+      action();
+      message=' ';
+    }else{
+      action();
+    }
   }
 }
 
