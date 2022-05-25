@@ -52,7 +52,7 @@ void Script(bool(*inter)(void), int distanceR, int distanceL, int Rspeed, int Ls
   {
     float dist = getDist();
     //Serial.println(dist);
-    //sendBT(dist);
+    sendBT(dist);
     TestInput();
     Serial.println("message un");
     Serial.println(message);
@@ -128,7 +128,10 @@ void action() {
   } else if (message == 'e') {
     Script(StoppasSTP, 50, 50, vitesseRoue, -vitesseRoue);
   } else if (message == 'o') {
-    Script(StoppasSTP, 50, 50, -vitesseRoue, vitesseRoue);
+    Script(StoppasSTP, 50, 50, -vitesseRoue, vitesseRoue);  
+  } else if (message == 'P') {
+    LWheel(0);
+    RWheel(0);
   } else {
     LWheel(0);
     RWheel(0);
@@ -154,10 +157,8 @@ void interruptD() {
 }
 
 void sendBT(float number) {
-  char text[5];
-  dtostrf(number, 0, 4, text);
-  Serial1.write(text);
-  Serial1.write("\n");
+  Serial1.print(number);
+  Serial1.print("\n");
 }
 
 float getDist()
