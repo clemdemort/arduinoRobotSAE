@@ -29,26 +29,38 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly
-    if (Serial1.available()) {
-    message = (char)Serial1.read();
-    Serial.println(message);
-  }
+  TestInput();
   action();
-  message = ' ';
 }
 
+void TestInput()
+{
+    if (Serial1.available()) {
+    message = (char)Serial1.read();
+    //Serial.println(message);
+    }
+}
 void Script(bool(*inter)(void), int distanceR, int distanceL, int Rspeed, int Lspeed)
 {
   float Rdist = distanceR;
   float Ldist = distanceL;
   compteurD = 0;
   compteurG = 0;
-  bool   cond = true;
+  bool cond = true;
+  char message2 = message;
   while (cond)
   {
     float dist = getDist();
-    Serial.println(dist);
-    sendBT(dist);
+    //Serial.println(dist);
+    //sendBT(dist);
+    TestInput();
+    Serial.println("message un");
+    Serial.println(message);
+    Serial.println(message2);
+    if(message2 != message)
+    {
+      cond = false;
+    }
     if (dist < 30)
     {
       float tempG = compteurG;
@@ -67,6 +79,7 @@ void Script(bool(*inter)(void), int distanceR, int distanceL, int Rspeed, int Ls
     if (Rdist < abs(compteurD) && Ldist < abs(compteurG))
     {
       cond = false;
+      message = ' ';
     }
   }
 
