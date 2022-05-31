@@ -160,16 +160,17 @@ void action() {
 }
 
 void sequence(){
-  char sequence[100];
+  char * sequence = new char[1];
   message=' ';
   int i=0;
-  while(message != 'Q'){
+  while(message != 'Q' && i <= 16){
     message=' ';
     while(message == ' '){
       TestInput();
-    }   
-    sequence[i]= message;
+    }
+    charappend(sequence,i,message);
     Serial.print(message);
+    Serial.print(i);
     i++;
   }
   for(int j = 0; j<i;j++){
@@ -183,6 +184,7 @@ void sequence(){
       action();
     }
   }
+  free(sequence);
 }
 
 void interruptG() {
@@ -237,4 +239,14 @@ void LWheel(int vitesse)
     digitalWrite(8, HIGH);
   }
   analogWrite(9, abs(vitesse));
+}
+
+void charappend(char *& list,int listsize, char letter)
+{
+    char * list2 = new char[listsize+1];
+    memcpy(list2,list,listsize);
+    list2[listsize] = letter;
+    list = new char[listsize+1];
+    memcpy(list,list2,listsize+1);
+    free(list2);
 }
