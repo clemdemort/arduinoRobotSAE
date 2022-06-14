@@ -246,6 +246,7 @@ void charappend(char *& list,int listsize, char letter)
     char * list2 = new char[listsize+1];
     memcpy(list2,list,listsize);
     list2[listsize] = letter;
+    free(list);
     list = new char[listsize+1];
     memcpy(list,list2,listsize+1);
     free(list2);
