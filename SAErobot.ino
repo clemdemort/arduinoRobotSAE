@@ -15,9 +15,6 @@ void setup() {
   // while(!Serial1){;}
   Serial.begin(9600);
   // while(!Serial){;}
-  Serial1.print("AT");
-  Serial1.print("AT+NAMERobot_33");
-  Serial1.print("AT+PIN0000");
   pinMode(12, OUTPUT);
   pinMode(10, OUTPUT);
   pinMode(8, OUTPUT);
