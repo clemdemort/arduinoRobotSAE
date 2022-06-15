@@ -40,6 +40,20 @@ void TestInput()
     //Serial.println(message);
     }
 }
+
+float gradiant(float edge0, float edge1, float x)
+{
+   if (x < edge0)
+      return 0;
+
+   if (x >= edge1)
+      return 1;
+      
+   x = (x - edge0) / (edge1 - edge0);
+
+   return x * x * (3 - 2 * x);
+}
+
 void Script(bool(*inter)(void), int distanceR, int distanceL, int Rspeed, int Lspeed)
 {
   float Rdist = distanceR;
@@ -61,26 +75,32 @@ void Script(bool(*inter)(void), int distanceR, int distanceL, int Rspeed, int Ls
     {
       cond = false;
     }
-    if (dist < 30)
+    if (dist < 10)
     {
+      Serial1.println("le mur mec");
       float tempG = compteurG;
       float tempD = compteurD;
       cond = inter();
+      Serial1.println(cond);
       if (cond == true)
       {
         compteurG = tempG;
         compteurD = tempD;
+      }else
+      {
+        message = ' ';  
       }
     }
     if (cond) {
-      RWheel(Rspeed);
-      LWheel(Lspeed);
+      RWheel(Rspeed*(0.5*(1-gradiant(0,Rdist,abs(compteurD)))+0.5));
+      LWheel(Lspeed*(0.5*(1-gradiant(0,Ldist,abs(compteurG)))+0.5));
     }
     if (Rdist < abs(compteurD) && Ldist < abs(compteurG))
     {
       cond = false;
       message = ' ';
     }
+    Serial1.println(cond);
   }
 
 }
@@ -88,11 +108,13 @@ void Script(bool(*inter)(void), int distanceR, int distanceL, int Rspeed, int Ls
 bool StopSTP()
 {
   Serial.println("wallah ta vu le mur");
+  RWheel(0);
+  LWheel(0);
   for (int i = 0; i < 5; i++) {
     Serial.print("mec ya un mur je teste numero: ");
     Serial.println(i);
     float distance = getDist();
-    while (distance < 35)
+    while (distance < 15)
     {
       distance = getDist();
       Serial.println(distance);
@@ -123,9 +145,9 @@ void action() {
   } else if (message == 'R') {
     Script(StoppasSTP, 200, 200, -vitesseRoue, -vitesseRoue);
   } else if (message == 'G') {
-    Script(StoppasSTP, 100, 100, vitesseRoue, -vitesseRoue);
+    Script(StoppasSTP, 93, 93, vitesseRoue, -vitesseRoue);
   } else if (message == 'D') {
-    Script(StoppasSTP, 100, 100, -vitesseRoue, vitesseRoue);
+    Script(StoppasSTP, 93, 93, -vitesseRoue, vitesseRoue);
   } else if (message == 'E') {
     Script(StoppasSTP, 50, 50, vitesseRoue, -vitesseRoue);
   } else if (message == 'O') {
@@ -160,7 +182,7 @@ void sequence(){
   char * sequence = new char[1];
   message=' ';
   int i=0;
-  while(message != 'Q' && i <= 16){
+  while(message != 'Q'){
     message=' ';
     while(message == ' '){
       TestInput();
